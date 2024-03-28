@@ -12,6 +12,20 @@ export const getWordingObjectArray = (categoryList, label) => {
         return d;
 }
 
-export const copyObjectToClipboard = (obj) => (sessionStorage.setItem("clipboard",JSON.stringify(obj)))
+export const createGridObject = (rowHeaders, columnHeaders) =>
+{
+     var d = [];var x = {};
+     rowHeaders.forEach(rh => {
+               columnHeaders.forEach(ch => {  x = {};
+                         x["row"]=rh;
+                         x["col"]=ch;
+                         x["value"]="";
+                    d.push(x);
+               }
+          )
+     });
+     return(d);
+}
 
+export const copyObjectToClipboard = (obj) => (sessionStorage.setItem("clipboard",JSON.stringify(obj)))
 export const pasteObjectFromClipboard = () => (JSON.parse(sessionStorage.getItem("clipboard")))

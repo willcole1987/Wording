@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {Row, Col, Button, Modal} from 'react-bootstrap';
 import GridSimpleSelectionBox from  './GridSimpleSelectionBox';
 
@@ -7,8 +7,14 @@ const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) =>
   // ensure unique childnodes when each is selected
   const [subsignalsModified, setSubsignalsModified] = useState(signals);
   const [searchList, setSearchList] = useState(subsignals);
+  const [filteredSearchList, setFilteredSearchList] = useState(subsignals);
   const [nodeSelectionLevel, setNodeSelectionLevel] = useState("");
-  const handleSearchChange  =  (list, text) => {setSearchList(list.filter(i => i.Name.toLowerCase().includes(text)))};
+  
+  const handleSearchChange  =  (text) => 
+      {
+        setFilteredSearchList(searchList.filter(i => i.Name.toLowerCase().includes(text)))
+      };
+
 
   // methods: specific nodes selected for the 2d grid wording
   const [signal, setSignal] = useState({});
@@ -41,7 +47,7 @@ const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) =>
           updateChildNode2Selection(nodeId);
           break;
       default:
-        break;
+          break;
     }
     return;
   } 
@@ -57,8 +63,11 @@ const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) =>
                 Select signal parent from the options below:
                 <input type="text" 
                        value={signal.Name ?? signal.Name}
-                       onFocus={() => { setSearchList(signals); setSignal({}); setNodeSelectionLevel("Signal"); }} 
-                       onChange={ (e) => handleSearchChange(signals, e.target.value)} />
+                       onClick={() => { setSearchList(signals); 
+                                        setFilteredSearchList(signals);
+                                        setSignal({}); 
+                                        setNodeSelectionLevel("Signal"); }} 
+                       onChange={ (e) => handleSearchChange(e.target.value)} />
                 <p>Status: {signal.Name === undefined  ? "none selected" : "signal selected" }</p>
                        <hr/>
           </Row>
@@ -66,10 +75,11 @@ const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) =>
                 Select subignal 1 from the options below:
                 <input type="text" 
                        value={subsignal1.Name ?? subsignal1.Name}
-                       onFocus={() => { setSearchList(subsignalsModified); 
+                       onClick={() => { setSearchList(subsignalsModified); 
+                                        setFilteredSearchList(subsignalsModified);
                                         setSubsignal1({}); 
-                                        setNodeSelectionLevel("ChildNode1"); }} 
-                       onChange={ (e) => handleSearchChange(subsignalsModified, e.target.value)} />
+                                        setNodeSelectionLevel("ChildNode1"); }}
+                       onChange={ (e) => handleSearchChange(e.target.value)} />
                 <p>Status: {subsignal1.Name === undefined  ? "none selected" : "subsignal selected" }</p>
                        <hr/>
           </Row>
@@ -77,16 +87,17 @@ const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) =>
                 Select subignal 2 from the options below:
                 <input type="text" 
                        value={subsignal2.Name ?? subsignal2.Name}
-                       onFocus={() => { setSearchList(subsignalsModified); 
+                       onClick={() => { setSearchList(subsignalsModified); 
+                                        setFilteredSearchList(subsignalsModified);
                                         setSubsignal2({}); 
                                         setNodeSelectionLevel("ChildNode2");}} 
-                       onChange={ (e) => handleSearchChange(subsignalsModified, e.target.value)} />
+                       onChange={ (e) => handleSearchChange(e.target.value)} />
                 <p>Status: {subsignal2.Name === undefined  ? "none selected" : "subsignal selected" }</p>
             <hr/>
           </Row>
         </Col>
         <Col>
-            <GridSimpleSelectionBox  filteredList={searchList} 
+            <GridSimpleSelectionBox  filteredList={filteredSearchList} 
                                      selectionLevel={nodeSelectionLevel} 
                                      handleNodeSelection={selectGridNode} />     
         </Col>

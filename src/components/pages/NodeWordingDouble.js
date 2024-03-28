@@ -1,33 +1,20 @@
 import {Row, Col, Container, Table,ButtonGroup, Button, Modal} from "react-bootstrap"
 import GridWordingSelectorModal from "../widgets/GridWordingSelectorModal";
+import {createGridObject} from '../helpers/helpers';
 import {useEffect, useState } from "react";
 import GridTable from "../widgets/GridTable";
 
 export const NodeWordingDouble = () => {
 
-     const [NodeFamily, setNodeFamily] = useState([]) // table html needs constructing  when this is set
+     // const [NodeFamily, setNodeFamily] = useState([]) // table html needs constructing  when this is set
+     const [selectedSignal, setSelectedSignal] = useState({});
+     const [selectedChildNode1, setSelectedChildNode1] = useState({});
+     const [selectedChildNode2, setSelectedChildNode2] = useState({});
      const [isShowModal, setIsShowModal] = useState(false);
 
-     // create the dictionary
+     // create the array of objects from lists
      const [rowHeaders, setRowHeaders ] = useState(["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"]);
      const [columnHeaders, setColumnHeaders ] = useState(["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"]);
-     
-     // create the gridWording object
-     const createGridObject = (rowHeaders, columnHeaders) =>
-     {
-          var d = [];var x = {};
-          rowHeaders.forEach(rh => {
-                    columnHeaders.forEach(ch => {  x = {};
-                              x["row"]=rh;
-                              x["col"]=ch;
-                              x["value"]="";
-                         d.push(x);
-                    }
-               )
-          });
-          return(d);
-     }
-
      const [gridWordingCollection, setGridWordingCollection]  = useState(createGridObject(rowHeaders,columnHeaders));
 
      const gridWordingCollectionUpdate =  (rowName, columnName, value) => {
@@ -37,7 +24,6 @@ export const NodeWordingDouble = () => {
           setGridWordingCollection(newGrid);
      }
 
-
      // Selectors
      const [signals, setSignals] = useState([]);
      const [subsignals, setSubsignals] = useState([]);
@@ -46,16 +32,22 @@ export const NodeWordingDouble = () => {
      const showModal = () => {setIsShowModal(true)}
      const updateOnModalClose = (signal, childNode1, childNode2) => 
      {
-          setNodeFamily([signal, childNode1, childNode2]);
+          setSelectedSignal(signal);
+          setSelectedChildNode1(childNode1);
+          setSelectedChildNode2(childNode2);
           setIsShowModal(false);
      }
 
      // TODO: set this up so that signal and subsignals are returned from the model under construction -  note dependency
-     const setNodesByLevel = (level, nodes) => { 
-          (level === 5) ? 
-          setSubsignals(nodes) 
-          : setSignals(nodes) 
-     };
+     const setNodesByLevel = (level, nodes) => { if(level === 5) 
+                                                       { 
+                                                            setSubsignals(nodes);
+                                                       } 
+                                                       else
+                                                       {
+                                                            setSignals(nodes);
+                                                       };
+                                                  }
 
      const getData = (nodeLevel) => {
           var requestOptions = { method: "GET", redirect: "follow",};
@@ -67,10 +59,9 @@ export const NodeWordingDouble = () => {
           .catch((error) => console.log("error", error));
      };
 
-     useEffect(() => {
-          getData(5);
-          getData(4);
-     },[]);
+     useEffect(() => {getData(5); getData(4);},
+               []);
+
 
      // TODO = create the grid html table
      return (
@@ -84,7 +75,7 @@ export const NodeWordingDouble = () => {
                     <Row>
                          <Col>
                               <ButtonGroup>
-                                   <Button variant="dark" onClick={showModal}>Select colors</Button>
+                                   <Button variant="dark" onClick={showModal}>Select Node Group</Button>
                               </ButtonGroup>
                               <hr style={{color: "white"}}/>
                          </Col>
@@ -109,15 +100,15 @@ export const NodeWordingDouble = () => {
                          <tbody>
                          <tr>
                               <td>Signal</td>
-                              <td>{NodeFamily[0] ?? ""}</td>
+                              <td>{selectedSignal["Name"] ?? ""}</td>
                          </tr>
                          <tr>
                               <td>Child Node 1 (rows)</td>
-                              <td>{NodeFamily[1] ?? ""}</td>
+                              <td>{selectedChildNode1["Name"] ?? ""}</td>
                          </tr>
                          <tr>
                               <td>Child Node 2  (columns)</td>
-                              <td>{NodeFamily[2] ?? ""}</td>
+                              <td>{selectedChildNode2["Name"] ?? ""}</td>
                          </tr>
                          </tbody>
                     </Table>
@@ -126,9 +117,9 @@ export const NodeWordingDouble = () => {
                     </Row>
                <Row>
                     <GridTable gridCollection={gridWordingCollection} 
-                                        RowHeaders={rowHeaders}    
-                                        ColumnHeaders={columnHeaders} 
-                                        handleGridCollectionChange={gridWordingCollectionUpdate}/>
+                               RowHeaders={rowHeaders}    
+                               ColumnHeaders={columnHeaders} 
+                               handleGridCollectionChange={gridWordingCollectionUpdate}/>
                </Row>
                </Col>
      </Container>

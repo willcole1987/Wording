@@ -25,8 +25,7 @@ export const NodeWordingDouble = () => {
      }
 
      // Selectors
-     const [signals, setSignals] = useState([]);
-     const [subsignals, setSubsignals] = useState([]);
+     const [nodes, setNodes] = useState([]);
      
      // modal functions
      const showModal = () => {setIsShowModal(true)}
@@ -39,28 +38,17 @@ export const NodeWordingDouble = () => {
      }
 
      // TODO: set this up so that signal and subsignals are returned from the model under construction -  note dependency
-     const setNodesByLevel = (level, nodes) => { if(level === 5) 
-                                                       { 
-                                                            setSubsignals(nodes);
-                                                       } 
-                                                       else
-                                                       {
-                                                            setSignals(nodes);
-                                                       };
-                                                  }
-
-     const getData = (nodeLevel) => {
+     const getData = () => {
           var requestOptions = { method: "GET", redirect: "follow",};
 
           fetch("http://localhost:3030/Nodes", requestOptions)
           .then((response) => response.json())
-          .then((result) => ( result.filter(i => i["Level"] === nodeLevel)))
-          .then((res) => setNodesByLevel(nodeLevel, res))
+          .then((result) => ( result.filter(i => [4,5].includes(i["Level"]))))
+          .then((res) => setNodes(res))
           .catch((error) => console.log("error", error));
      };
 
-     useEffect(() => {getData(5); getData(4);},
-               []);
+     useEffect(() => {getData()}, []);
 
 
      // TODO = create the grid html table
@@ -76,6 +64,7 @@ export const NodeWordingDouble = () => {
                          <Col>
                               <ButtonGroup>
                                    <Button variant="dark" onClick={showModal}>Select Node Group</Button>
+                                   <Button variant="dark">Copy</Button>
                               </ButtonGroup>
                               <hr style={{color: "white"}}/>
                          </Col>
@@ -83,8 +72,7 @@ export const NodeWordingDouble = () => {
                     <Row>
                          <Modal show={isShowModal}>
                               <GridWordingSelectorModal title={"Grid Wording"} 
-                                                       signals={signals} 
-                                                       subsignals={subsignals} 
+                                                       nodelist={nodes} 
                                                        handleClose={updateOnModalClose}  />
                          </Modal>
                     </Row>

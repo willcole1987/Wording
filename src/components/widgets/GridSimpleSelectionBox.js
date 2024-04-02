@@ -1,10 +1,10 @@
 import  ScrollBox  from './ScrollBox';
 
-const GridSimpleSelectionBox = ({filteredList, selectionLevel, handleNodeSelection}) => {
-  const handleSelectionClick = (selectionLevel, id) => {  handleNodeSelection(selectionLevel, id) };
+const GridSimpleSelectionBox = ({filteredList, handleNodeSelection}) => {
+  const handleSelectionClick = (id) => {  handleNodeSelection(id) };
   return (
     <>
-        <ScrollBox optionsList={filteredList} selectionLevel={selectionLevel} selectItem={handleSelectionClick} />
+        <ScrollBox optionsList={filteredList} selectItem={handleSelectionClick} />
     </>
   );
 }

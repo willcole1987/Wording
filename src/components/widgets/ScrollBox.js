@@ -1,4 +1,4 @@
-const ScrollBox = ({optionsList, selectionLevel, selectItem}) =>
+const ScrollBox = ({optionsList, selectItem}) =>
 {
     
     const boxStyle = { border:"1px solid black",
@@ -8,7 +8,6 @@ const ScrollBox = ({optionsList, selectionLevel, selectItem}) =>
                         overflowX:"hidden"
                     };
                     
-    const handleModelSelectionClick = (selectionLevel, Id) => { selectItem(selectionLevel, Id);}
 
     return(
         <div style={boxStyle}>
@@ -16,7 +15,7 @@ const ScrollBox = ({optionsList, selectionLevel, selectItem}) =>
                 {optionsList.map(i => 
                         (<li key={i["Id"]} 
                              id={i["Id"]} 
-                             onClick={() => handleModelSelectionClick(selectionLevel, i.Id)}>{i["Name"]}</li>)
+                             onClick={() => selectItem(i.Id)}>{i["Name"]}</li>)
                     )
                 }
             </ul>

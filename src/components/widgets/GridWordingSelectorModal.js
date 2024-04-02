@@ -1,57 +1,47 @@
-import { useState } from 'react';
+import { useState, useReducer, useEffect } from 'react';
+import FilterListReducer from '../reducers/FilterListReducer';
 import {Row, Col, Button, Modal} from 'react-bootstrap';
-import GridSimpleSelectionBox from  './GridSimpleSelectionBox';
+import  ScrollBox  from './ScrollBox';
 
-const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) => {
-
-  // ensure unique childnodes when each is selected
-  const [subsignalsModified, setSubsignalsModified] = useState(signals);
-  const [searchList, setSearchList] = useState(subsignals);
-  const [filteredSearchList, setFilteredSearchList] = useState(subsignals);
-  const [nodeSelectionLevel, setNodeSelectionLevel] = useState("");
-  
-  const handleSearchChange  =  (text) => 
-      {
-        setFilteredSearchList(searchList.filter(i => i.Name.toLowerCase().includes(text)))
-      };
-
+const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
 
   // methods: specific nodes selected for the 2d grid wording
-  const [signal, setSignal] = useState({});
-  const [subsignal1, setSubsignal1] = useState({});
-  const [subsignal2, setSubsignal2] = useState({});
+  const [nodes, setNodes] = useState([{},{},{}]); // 0=signal, 1=childnode1, 2=childnode2
+  const [nodeTextArray, setNodeTextArray] = useState(["","",""]); // 0=signal, 1=childnode1, 2=childnode2
+  const [disabledInputs, setDisabledInputs] = useState(true);
+  const [filterList, dispatch] =  useReducer(FilterListReducer, nodelist);
+  const [activeOrder, setActiveOrder] = useState(0);
+  const baseNodesList = nodelist;
 
-  // selectors
-  const updateSignalSelection = (SignalSelectionId) => {setSignal(signals.filter(i  =>  i.Id === SignalSelectionId)[0])};
-
-  const updateChildNode1Selection = (childNodeSubsignalId) => {
-    setSubsignal1(subsignalsModified.filter(i => i.Id === childNodeSubsignalId)[0]);
-    setSubsignalsModified(subsignals.filter(i  =>  i.Id !== childNodeSubsignalId));
-  }
-
-  const updateChildNode2Selection = (childNodeSubsignalId) => {  
-    setSubsignal2(subsignalsModified.filter(i => i.Id === childNodeSubsignalId)[0]);
-    setSubsignalsModified(subsignals.filter(i  =>  i.Id !== childNodeSubsignalId));
-  }
-
-  const selectGridNode = (nodeLevelText, nodeId)  => {
-    switch(nodeLevelText)
-    {
-      case "Signal":
-          updateSignalSelection(nodeId);
-          break;
-      case "ChildNode1":
-          updateChildNode1Selection(nodeId);
-          break;
-      case "ChildNode2":
-          updateChildNode2Selection(nodeId);
-          break;
-      default:
-          break;
-    }
-    return;
-  } 
+  const updateNodes = (index, newNode) => { setNodes(nodes.map((i, idx) => (idx === index ? newNode : i )))};
+  const updateNodeTextArray  = (index, newInput)  => { setNodeTextArray(nodeTextArray.map((i, idx) => (idx === index ? newInput : i )))};
+  const resolveExcludedNode = (node) => (node === 1 ? nodes[2] : (node === 2  ? nodes[1] : {}));
   
+  const selectGridNode = (nodeId)  => 
+  {
+    if(activeOrder === 0) { setDisabledInputs(false); } 
+    const selectedNode =  baseNodesList.filter(i =>  i["Id"] === nodeId)[0];
+    updateNodes(activeOrder,selectedNode);
+  }
+
+  const updateInput = (nodeOrder, text) => 
+  {
+    const excludedNode = resolveExcludedNode(nodeOrder);
+    updateNodeTextArray(nodeOrder,text)
+    dispatch({type:'update',list:baseNodesList,node: nodeOrder,text: text, excludedNode: excludedNode});
+  
+  }
+
+  const resetNodeInput = (nodeOrder) => 
+  {
+    if(nodeOrder === 0) { setDisabledInputs(true); } 
+    setActiveOrder(nodeOrder);
+    updateNodes(nodeOrder,{});
+    updateNodeTextArray(nodeOrder,"");
+    const excludedNode = resolveExcludedNode(nodeOrder);
+    dispatch({type:'reset', node:nodeOrder, list: baseNodesList, excludedNode: excludedNode});
+  }
+
   return (
       <Modal.Dialog>
         <Modal.Header>
@@ -60,49 +50,40 @@ const GridWordingSelectorModal = ({title, signals, subsignals, handleClose }) =>
         <Modal.Body>
         <Col>
           <Row>
-                Select signal parent from the options below:
+                1. Select signal parent from the options below:
                 <input type="text" 
-                       value={signal.Name ?? signal.Name}
-                       onClick={() => { setSearchList(signals); 
-                                        setFilteredSearchList(signals);
-                                        setSignal({}); 
-                                        setNodeSelectionLevel("Signal"); }} 
-                       onChange={ (e) => handleSearchChange(e.target.value)} />
-                <p>Status: {signal.Name === undefined  ? "none selected" : "signal selected" }</p>
+                       value={nodes[0]["Name"] ?? nodeTextArray[0]}
+                       onFocus={(e) => {resetNodeInput(0); e.stopPropagation();}} 
+                       onChange={ (e) => {updateInput(0, e.target.value);}} />
+                <p>Status: {nodes[0] === undefined  ? "none selected" : "signal selected" }</p>
                        <hr/>
           </Row>
           <Row>
-                Select subignal 1 from the options below:
-                <input type="text" 
-                       value={subsignal1.Name ?? subsignal1.Name}
-                       onClick={() => { setSearchList(subsignalsModified); 
-                                        setFilteredSearchList(subsignalsModified);
-                                        setSubsignal1({}); 
-                                        setNodeSelectionLevel("ChildNode1"); }}
-                       onChange={ (e) => handleSearchChange(e.target.value)} />
-                <p>Status: {subsignal1.Name === undefined  ? "none selected" : "subsignal selected" }</p>
+                2. Select subignal 1 from the options below:
+                <input disabled={disabledInputs} 
+                       type="text" 
+                       value={nodes[1]["Name"] ?? nodeTextArray[1]}
+                       onFocus={(e) => {resetNodeInput(1); e.stopPropagation();}} 
+                       onChange={ (e) => {updateInput(1, e.target.value);}} />
+                <p>Status: {nodes[1] === undefined  ? "none selected" : "subsignal selected" }</p>
                        <hr/>
           </Row>
           <Row>
-                Select subignal 2 from the options below:
-                <input type="text" 
-                       value={subsignal2.Name ?? subsignal2.Name}
-                       onClick={() => { setSearchList(subsignalsModified); 
-                                        setFilteredSearchList(subsignalsModified);
-                                        setSubsignal2({}); 
-                                        setNodeSelectionLevel("ChildNode2");}} 
-                       onChange={ (e) => handleSearchChange(e.target.value)} />
-                <p>Status: {subsignal2.Name === undefined  ? "none selected" : "subsignal selected" }</p>
+                3. Select subignal 2 from the options below:
+                <input disabled={disabledInputs}
+                       type="text" 
+                       value={nodes[2]["Name"] ?? nodeTextArray[2]}
+                       onFocus={(e) => {resetNodeInput(2); e.stopPropagation();}} 
+                       onChange={ (e) => {updateInput(2, e.target.value);}} />
+                <p>Status: {nodes[2]  === undefined  ? "none selected" : "subsignal selected" }</p>
             <hr/>
           </Row>
         </Col>
         <Col>
-            <GridSimpleSelectionBox  filteredList={filteredSearchList} 
-                                     selectionLevel={nodeSelectionLevel} 
-                                     handleNodeSelection={selectGridNode} />     
+            <ScrollBox optionsList={filterList} selectItem={selectGridNode} />
         </Col>
         </Modal.Body>
-        <Button onClick={() => handleClose(signal, subsignal1, subsignal2)}>
+        <Button onClick={() => handleClose(nodes[0], nodes[1], nodes[2])}>
           Ok
         </Button>
       </Modal.Dialog>

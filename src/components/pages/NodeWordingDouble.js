@@ -3,9 +3,12 @@ import GridWordingSelectorModal from "../widgets/GridWordingSelectorModal";
 import {createGridObject} from '../helpers/helpers';
 import {useEffect, useState } from "react";
 import GridTable from "../widgets/GridTable";
+import HandsonDataGrid from "../widgets/HandsonDataGrid";
 
 export const NodeWordingDouble = () => {
 
+     const handsOnData = [['', 'Tesla', 'Mercedes', 'Toyota', 'Volvo'], ['2019', 10, 11, 12, 13],
+          ['2020', 20, 11, 14, 13], ['2021', 30, 15, 12, 13]];
      // const [NodeFamily, setNodeFamily] = useState([]) // table html needs constructing  when this is set
      const [selectedSignal, setSelectedSignal] = useState({});
      const [selectedChildNode1, setSelectedChildNode1] = useState({});
@@ -104,10 +107,11 @@ export const NodeWordingDouble = () => {
                     <Col></Col>
                     </Row>
                <Row>
-                    <GridTable gridCollection={gridWordingCollection} 
+                    {/* <GridTable gridCollection={gridWordingCollection} 
                                RowHeaders={rowHeaders}    
                                ColumnHeaders={columnHeaders} 
-                               handleGridCollectionChange={gridWordingCollectionUpdate}/>
+                               handleGridCollectionChange={gridWordingCollectionUpdate}/> */}
+                               <HandsonDataGrid  data={handsOnData}/>
                </Row>
                </Col>
      </Container>

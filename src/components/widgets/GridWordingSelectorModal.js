@@ -1,4 +1,4 @@
-import { useState, useReducer, useEffect } from 'react';
+import { useState, useReducer } from 'react';
 import FilterListReducer from '../reducers/FilterListReducer';
 import {Row, Col, Button, Modal} from 'react-bootstrap';
 import  ScrollBox  from './ScrollBox';
@@ -8,13 +8,14 @@ const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
   // methods: specific nodes selected for the 2d grid wording
   const [nodes, setNodes] = useState([{},{},{}]); // 0=signal, 1=childnode1, 2=childnode2
   const [nodeTextArray, setNodeTextArray] = useState(["","",""]); // 0=signal, 1=childnode1, 2=childnode2
+  const updateNodes = (index, newNode) => { setNodes(nodes.map((i, idx) => (idx === index ? newNode : i )))};
+  const updateNodeTextArray  = (index, newInput)  => { setNodeTextArray(nodeTextArray.map((i, idx) => (idx === index ? newInput : i )))};
+  
   const [disabledInputs, setDisabledInputs] = useState(true);
   const [filterList, dispatch] =  useReducer(FilterListReducer, nodelist);
   const [activeOrder, setActiveOrder] = useState(0);
   const baseNodesList = nodelist;
 
-  const updateNodes = (index, newNode) => { setNodes(nodes.map((i, idx) => (idx === index ? newNode : i )))};
-  const updateNodeTextArray  = (index, newInput)  => { setNodeTextArray(nodeTextArray.map((i, idx) => (idx === index ? newInput : i )))};
   const resolveExcludedNode = (node) => (node === 1 ? nodes[2] : (node === 2  ? nodes[1] : {}));
   
   const selectGridNode = (nodeId)  => 

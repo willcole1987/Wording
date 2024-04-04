@@ -56,6 +56,7 @@ export const NodeWordingDouble = () => {
 
      // TODO = create the grid html table
      return (
+          <>
           <Container>
                <Col>
                     <Row>
@@ -80,41 +81,47 @@ export const NodeWordingDouble = () => {
                          </Modal>
                     </Row>
                     <Row>
-                    <Col>
-                    <Table striped bordered hover>
-                         <thead>
-                         <tr>
-                              <th>Node</th>
-                              <th>Selection</th>
-                         </tr>
-                         </thead>
-                         <tbody>
-                         <tr>
-                              <td>Signal</td>
-                              <td>{selectedSignal["Name"] ?? ""}</td>
-                         </tr>
-                         <tr>
-                              <td>Child Node 1 (rows)</td>
-                              <td>{selectedChildNode1["Name"] ?? ""}</td>
-                         </tr>
-                         <tr>
-                              <td>Child Node 2  (columns)</td>
-                              <td>{selectedChildNode2["Name"] ?? ""}</td>
-                         </tr>
-                         </tbody>
-                    </Table>
-                    </Col>
-                    <Col></Col>
+                         <Col>
+                              <Table striped bordered hover>
+                                   <thead>
+                                   <tr>
+                                        <th>Node</th>
+                                        <th>Selection</th>
+                                   </tr>
+                                   </thead>
+                                   <tbody>
+                                   <tr>
+                                        <td>Signal</td>
+                                        <td>{selectedSignal["Name"] ?? ""}</td>
+                                   </tr>
+                                   <tr>
+                                        <td>Child Node 1 (rows)</td>
+                                        <td>{selectedChildNode1["Name"] ?? ""}</td>
+                                   </tr>
+                                   <tr>
+                                        <td>Child Node 2  (columns)</td>
+                                        <td>{selectedChildNode2["Name"] ?? ""}</td>
+                                   </tr>
+                                   </tbody>
+                              </Table>
+                         </Col>
+                         <Col>
+                         </Col>
                     </Row>
-               <Row>
-                    {/* <GridTable gridCollection={gridWordingCollection} 
-                               RowHeaders={rowHeaders}    
-                               ColumnHeaders={columnHeaders} 
-                               handleGridCollectionChange={gridWordingCollectionUpdate}/> */}
-                               <HandsonDataGrid  data={handsOnData}/>
-               </Row>
+                    <Row>
+                         <Col>
+                              <GridTable gridCollection={gridWordingCollection} 
+                                        RowHeaders={rowHeaders}    
+                                        ColumnHeaders={columnHeaders} 
+                                        handleGridCollectionChange={gridWordingCollectionUpdate}/>
+                    
+                              {/* <HandsonDataGrid  data={handsOnData}/> */}
+                         </Col>
+                    </Row>
                </Col>
      </Container>
+ 
+     </>
     )
 
 }

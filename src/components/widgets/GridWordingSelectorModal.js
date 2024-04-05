@@ -6,34 +6,34 @@ import  ScrollBox  from './ScrollBox';
 const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
 
   const defaultNodes = [{Id: null, Level: null, Name: null},{Id: null, Level: null, Name: null},{Id: null, Level: null, Name: null}]; 
+  const defaultNodeTexts = ["","",""];
   const [nodes, setNodes] = useState(defaultNodes);
-  const [nodeTextArray, setNodeTextArray] = useState(["","",""]);
-  
-  const updateNodes = (index, newNode) => { setNodes(nodes.map((i, idx) => (idx === index ? newNode : i )))};
-  const updateNodeTextArray  = (index, newInput)  => { setNodeTextArray(nodeTextArray.map((i, idx) => (idx === index ? newInput : i )))};
-  
+  const [nodeTextArray, setNodeTextArray] = useState(defaultNodeTexts);
   const [disabledInputs, setDisabledInputs] = useState(true);
   const [activeOrder, setActiveOrder] = useState(0);
   const baseNodesList = nodelist;
   const [filterList, dispatch] =  useReducer(FilterListReducer, nodelist);
 
+  const updateNodes = (index, newNode) => { const updatedNodes = nodes.map((i, idx) => (idx === index ? newNode : i ));  
+                                            setNodes(updatedNodes);
+                                          };
+  const updateNodeTextArray  = (index, newInput)  => { setNodeTextArray(nodeTextArray.map((i, idx) => (idx === index ? newInput : i )))};
   const resolveExcludedNode = (node) => (node === 1 ? nodes[2] : (node === 2  ? nodes[1] : {}));
-  const resetAllChildNodes = () => { setNodes( [...defaultNodes])
-                                     setNodeTextArray(["","",""])
-                                    };
+  
   const selectGridNode = (nodeId)  => 
   {
     if(activeOrder === 0) { setDisabledInputs(false); } 
     const selectedNode =  baseNodesList.filter(i =>  i["Id"] === nodeId)[0];
     updateNodes(activeOrder,selectedNode);
   }
+
   const updateInput = (nodeOrder, text) => 
   {
     const excludedNode = resolveExcludedNode(nodeOrder);
     updateNodeTextArray(nodeOrder,text)
     dispatch({type:'update',list:baseNodesList,node: nodeOrder,text: text, excludedNode: excludedNode});
-  
   }
+
   const resetNodeInput = (nodeOrder) => 
   {
     setActiveOrder(nodeOrder);
@@ -42,10 +42,10 @@ const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
     const excludedNode = resolveExcludedNode(nodeOrder);
     dispatch({type:'reset', node:nodeOrder, list: baseNodesList, excludedNode: excludedNode});
     if(nodeOrder === 0) { 
-      updateNodes(1,{Id: null, Level: null, Name: null});    
-      updateNodes(2,{Id: null, Level: null, Name: null});    
-      setDisabledInputs(true);}
-      console.log(nodes); 
+      setNodes(defaultNodes); 
+      setNodeTextArray(defaultNodeTexts);
+      setDisabledInputs(true);
+    }
   }
 
   return (
@@ -59,7 +59,7 @@ const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
                 1. Select signal parent from the options below:
                 <input type="text" 
                        value={nodes[0]["Name"] ?? nodeTextArray[0]}
-                       onClick={() => {resetAllChildNodes();resetNodeInput(0);}} 
+                       onClick={() => {resetNodeInput(0);}} 
                        onChange={ (e) => {updateInput(0, e.target.value);}} />
                 <p>Status: {nodes[0]["Name"] === null  ? "none selected" : "signal selected" }</p>
                        <hr/>
@@ -79,7 +79,7 @@ const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
                 <input disabled={disabledInputs}
                        type="text" 
                        value={nodes[2]["Name"] ?? nodeTextArray[2]}
-                       onClick={(e) => {resetNodeInput(2);}} 
+                       onClick={() => {resetNodeInput(2);}} 
                        onChange={ (e) => {updateInput(2, e.target.value);}} />
                 <p>Status: {nodes[2]["Name"] === null  ? "none selected" : "subsignal selected" }</p>
             <hr/>

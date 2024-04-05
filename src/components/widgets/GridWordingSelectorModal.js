@@ -5,7 +5,9 @@ import  ScrollBox  from './ScrollBox';
 
 const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
 
-  const defaultNodes = [{Id: null, Level: null, Name: null},{Id: null, Level: null, Name: null},{Id: null, Level: null, Name: null}]; 
+  const defaultNodes = [{Id: null, Level: null, Name: null},
+                        {Id: null, Level: null, Name: null},
+                        {Id: null, Level: null, Name: null}]; 
   const defaultNodeTexts = ["","",""];
   const [nodes, setNodes] = useState(defaultNodes);
   const [nodeTextArray, setNodeTextArray] = useState(defaultNodeTexts);

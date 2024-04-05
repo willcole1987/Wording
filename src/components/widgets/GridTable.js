@@ -4,13 +4,11 @@ import { useState } from 'react';
 
 const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollectionChange} ) => {
   
-  const [alteredColumnHeaders, setAlteredColumnHeaders] = useState(["X"].concat(ColumnHeaders));
-  const getHeadersFromArray = (columnHeaders) => (
-                        columnHeaders.map((i, id) => {return(<th>{i}</th>) }) 
-                      )
+  const alteredColumnHeaders = ["X"].concat(ColumnHeaders);
+  const getHeadersFromArray = (columnHeaders) => (columnHeaders.map((i) => {return(<th>{i}</th>) }));
       
-  const getGridValue  =  (rowHeader, columnHader) => { return gridCollection.filter(i => 
-    i.row === rowHeader && i.col === columnHader)[0]["value"] 
+  const getGridValue  =  (rowHeader, columnHader) => { 
+    return gridCollection.filter(i => i.row === rowHeader && i.col === columnHader)[0]["value"] 
   }
   const mapRowCells = (rowHeader, columnHeaders, rootIndex) => (
         <tr>

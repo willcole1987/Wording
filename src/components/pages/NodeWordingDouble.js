@@ -7,17 +7,14 @@ import HandsonDataGrid from "../widgets/HandsonDataGrid";
 
 export const NodeWordingDouble = () => {
 
-     const handsOnData = [['', 'Tesla', 'Mercedes', 'Toyota', 'Volvo'], ['2019', 10, 11, 12, 13],
-          ['2020', 20, 11, 14, 13], ['2021', 30, 15, 12, 13]];
-     // const [NodeFamily, setNodeFamily] = useState([]) // table html needs constructing  when this is set
      const [selectedSignal, setSelectedSignal] = useState({});
      const [selectedChildNode1, setSelectedChildNode1] = useState({});
      const [selectedChildNode2, setSelectedChildNode2] = useState({});
      const [isShowModal, setIsShowModal] = useState(false);
 
      // create the array of objects from lists
-     const [rowHeaders, setRowHeaders ] = useState(["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"]);
-     const [columnHeaders, setColumnHeaders ] = useState(["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"]);
+     const rowHeaders = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
+     const columnHeaders = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
      const [gridWordingCollection, setGridWordingCollection]  = useState(createGridObject(rowHeaders,columnHeaders));
 
      const gridWordingCollectionUpdate =  (rowName, columnName, value) => {
@@ -27,7 +24,7 @@ export const NodeWordingDouble = () => {
           setGridWordingCollection(newGrid);
      }
 
-     // Selectors
+     // Selecters
      const [nodes, setNodes] = useState([]);
      
      // modal functions
@@ -50,7 +47,6 @@ export const NodeWordingDouble = () => {
           .then((res) => setNodes(res))
           .catch((error) => console.log("error", error));
      };
-
      useEffect(() => {getData()}, []);
 
 

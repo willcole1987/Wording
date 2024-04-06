@@ -1,21 +1,18 @@
 import { useRef } from "react";
 
-const ExcelInputCell = ({ id, label, name, value, handleChange}) => 
+const ExcelInputCell = ({ label, name, value, handleChange}) => 
 {
     const cellRef = useRef(null);
     const setFocus = () => {cellRef.current.focus();}
 
     return (
-        <td onClick={()  => (setFocus())}>
-            <div key={id}
-                 style={{ outline: "none" }}
+        <td  onClick={()  => (setFocus())}>
+            <div style={{ outline: "none" }}
                  contentEditable={true} 
                  ref={cellRef}
                  type="text" 
                  value={value} 
-                 onInput={(e) => ( 
-                                    handleChange(label,  name, e.target.innerHTML) 
-                                    )}></div>
+                 onInput={(e) => ( handleChange(label,  name, e.target.innerHTML))}></div>
         </td>
     )
 }

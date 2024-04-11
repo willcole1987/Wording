@@ -2,9 +2,10 @@ import { Table } from 'react-bootstrap';
 import ExcelInputCell from './ExcelInputCell'
 import { useState } from 'react';
 
-const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollectionChange} ) => {
+const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollectionChange, handleGridCellSetActive } ) => {
   
   const alteredColumnHeaders = ["X"].concat(ColumnHeaders);
+
   const getHeadersFromArray = (columnHeaders) => (columnHeaders.map((i,idx) => {return(<th key={idx}>{i}</th>) }));
       
   const getGridValue  =  (rowHeader, columnHader) => { 
@@ -14,13 +15,15 @@ const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollect
         <tr key={rootIndex}>
             {
               [rowHeader].concat(columnHeaders).map((i, index) => 
-                                          (index === 0) ? <td key={`${rootIndex}-${index}`}>{i}</td>
+                                          (index === 0) ? 
+                                          <td key={`${rootIndex}-${index}`}>{i}</td>
                                           :
                                           <ExcelInputCell key={`${rootIndex}-${index}`}
                                                           label={rowHeader}
                                                           name={i}
                                                           value={getGridValue(rowHeader, i)}
-                                                          handleChange={(e) => handleGridCollectionChange(rowHeader, i, e.target.value )} />
+                                                          handleChange={handleGridCollectionChange}
+                                                          handleCellActivate={handleGridCellSetActive} />
                                             )
             }
          </tr>
@@ -39,29 +42,13 @@ const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollect
         <tr>
           {
             getHeadersFromArray(alteredColumnHeaders)
-            // ['#','First Name','Last Name','Username'].map((i,idx) =>  <th key={idx}>{i}</th>)
           }
         </tr>
       </thead>
       <tbody>
-      {getTableBodyFromRowColumnArray(RowHeaders,ColumnHeaders)}
-        {/* <tr>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td colSpan={2}>Larry the Bird</td>
-          <td>@twitter</td>
-        </tr> */}
+        {
+            getTableBodyFromRowColumnArray(RowHeaders,ColumnHeaders)
+        }
       </tbody>
           </Table>
         )

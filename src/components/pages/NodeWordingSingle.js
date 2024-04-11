@@ -54,13 +54,13 @@ export const NodeWordingSingle = () => {
                     </div>
                </Row>
                <Row>
+                    
                     <Col>
                          <ButtonGroup>
                               <Button variant="dark" onClick={showModal}>Select Wording Assessments</Button><br/>
                               <Button variant="dark" onClick={() => {copyObjectToClipboard(colorWordingDictionary)} }>Copy</Button>
                          </ButtonGroup>
-                    </Col>
-                    <Col>
+                         <hr style={{color: "white"}}/>
                     </Col>
                </Row>
                <Row>

@@ -18,13 +18,21 @@ export const NodeWordingDouble = () => {
      const [gridWordingCollection, setGridWordingCollection]  = useState(createGridObject(rowHeaders,columnHeaders));
 
      const gridWordingCollectionUpdate =  (rowName, columnName, value) => {
-          const newGrid  = gridWordingCollection;
-          const index = gridWordingCollection.findIndex(i => i.row === rowName && i.col === columnName);
-          newGrid[index].value = value;
+          const newGrid  = gridWordingCollection.map(i => (i.row === rowName && i.col === columnName) ? 
+                                                          {...i, 'value':value}:
+                                                          i
+                                                       );
           setGridWordingCollection(newGrid);
      }
 
-     // Selecters
+     const gridWordingCollectionUpdateActiveInput =  (rowName, columnName) => {
+           const newGrid = gridWordingCollection.map((i) => (i.row === rowName && i.col === columnName) ? 
+                                                            {...i, 'isActive':1} : 
+                                                            {...i, 'isActive':0});
+          setGridWordingCollection(newGrid);
+     }
+
+     // Selectors
      const [nodes, setNodes] = useState([]);
      
      // modal functions
@@ -107,11 +115,10 @@ export const NodeWordingDouble = () => {
                     <Row>
                          <Col>
                               <GridTable gridCollection={gridWordingCollection} 
-                                        RowHeaders={rowHeaders}    
-                                        ColumnHeaders={columnHeaders} 
-                                        handleGridCollectionChange={gridWordingCollectionUpdate}/>
-                    
-                              {/* <HandsonDataGrid  data={handsOnData}/> */}
+                                         RowHeaders={rowHeaders}    
+                                         ColumnHeaders={columnHeaders} 
+                                         handleGridCollectionChange={gridWordingCollectionUpdate}
+                                         handleGridCellSetActive={gridWordingCollectionUpdateActiveInput}/>
                          </Col>
                     </Row>
                </Col>

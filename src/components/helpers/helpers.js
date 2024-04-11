@@ -20,6 +20,7 @@ export const createGridObject = (rowHeaders, columnHeaders) =>
                          x["row"]=rh;
                          x["col"]=ch;
                          x["value"]="";
+                         x["active"]=0;
                     d.push(x);
                }
           )

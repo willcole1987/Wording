@@ -1,49 +1,44 @@
 import { useRef, useState } from "react";
-import { Form } from 'react-bootstrap';
+import { Form, Container } from 'react-bootstrap';
 
 const ExcelInputCell = ({ label, name, value, isActive=0, handleActivate, handleChange}) => 
 {
     const [cellState, setCellState] = useState(0);
     const clickCounter = useRef(0);
     var singleClickTimer = '';
-    const cellStyles = { nonEditable:{ },
-                         gridEditable:{ outline: "solid", opacity:"1", outlineColor:"green"},
-                         editable:{ outline: "solid", opacity:"1",     outlineColor:"red"}};
-    const determineStyle = (stateNumber) => ( (stateNumber ===  0) ? 
-                                                cellStyles.nonEditable : 
-                                                ((stateNumber ===  1) ? 
-                                                    cellStyles.gridEditable : 
-                                                    cellStyles.editable ));
-    // const cellRef = useRef(null);
-    // const setFocus = () => { cellRef.current.focus(); }
+    const cellStyles = { nonEditable:{width:"170px", height:"10px" },
+                         gridEditable:{ outline: "solid", opacity:"1", width:"170px", height:"10px", outlineColor:"green"},
+                         editable:{ outline: "solid", opacity:"1", width:"170px", height:"10px", outlineColor:"red"}};
+    
+    const determineStyle = (stateNumber) => ( (stateNumber ===  0) ? cellStyles.nonEditable : 
+                                                ((stateNumber ===  1) ?  cellStyles.gridEditable : cellStyles.editable ));
+
     const updateCellState = (stateId) => {
         setCellState(stateId);
-        // if (cellState === 2) { setToggleFocus(true) }
     }
 
     const singleClickRun = () => {
-        // console.log(toggleFocus);
-        // if (!toggleFocus)  { updateCellState(1);}
-        // setToggleFocus(false);
         updateCellState(1);
-        // console.log(cellState);
-        // console.log(toggleFocus);
-    }
-    const dblClickRun = () => {
-        // console.log(toggleFocus);
-        updateCellState(2);
-        // setToggleFocus(true);
-        // console.log(cellState);
-        // console.log(toggleFocus);
     }
 
-    const handleClicks = ()  => {
+    const dblClickRun = () => {
+        updateCellState(2);
+    }
+
+    const changeActiveCell = (key) => {
+    if (key === "Enter") 
+        {
+            // activate the next cell down if state = 1 or else set back to 1 if cellstate is 2
+        }
+    }
+    const handleClicks = ()  => 
+    {
       clickCounter.current  += 1;
       if (clickCounter.current === 1) {
         singleClickTimer = (
-                                setTimeout(() => {clickCounter.current = 0; 
-                                                    singleClickRun();}, 
-                                                    300));
+        setTimeout(() => {clickCounter.current = 0; 
+                            singleClickRun();}, 
+                            250));
       }
       else if (clickCounter.current === 2) {
         clearTimeout(singleClickTimer);
@@ -55,31 +50,29 @@ const ExcelInputCell = ({ label, name, value, isActive=0, handleActivate, handle
     // 3 cell states states: non-editable, pasteable (from excel range), editable
     // React uses onFocus and onBlur instead of onFocusIn and onFocusOut.
     // console.log(cellState)
-    return (
-            <td onClick={handleClicks}
-                style={determineStyle(cellState)}>
-                     {
-                        (cellState === 2) ? 
-                           <Form.Control
-                                 disabled={ false  }
-                                 type="text"
-                                 value={value}
-                                 onChange={(e) => (handleChange(label,  name, e.target.value))}
-                                 onClick={(e) => e.stopPropagation()}
-                                 ></Form.Control> 
+    return (<td style={determineStyle(cellState)}
+                onClick={handleClicks}>
+                     {  (cellState === 2) ?
+                            <Form.Control  autoFocus
+                                           value={value}
+                                           onClick={handleClicks}
+                                           onChange={(e) => (handleChange(label,  name, e.target.value))}
+                                           onKeyDown={(e) => {changeActiveCell(e)}}
+                                           >
+                            </Form.Control>
                             :
-                            <Form.Control
-                                disabled={ true  }
-                                type="text"
-                                value={value}
-                                onChange={(e) => (handleChange(label,  name, e.target.value))}
-                                onClick={(e) => e.stopPropagation()}
-                            ></Form.Control>
-                            // :
-                            // <>
-                            //     <label type="text" value="12345"></label>
-                            // </>
-                    } 
+                            <div contenteditable="true" 
+                                id="capture" 
+                                style={{height: "100%", width: "100%", outline:"none"}}
+                                onPaste={(e) => (console.log(e.clipboardData))}>
+                            </div>
+                            // <Form.Control
+                            //         disabled={true}
+                            //         value={value}
+                            //         onClick={handleClicks}
+                            //         onPaste={() => (console.log("way to go"))}>
+                            // </Form.Control>
+                     }
            </td>)
 }
 

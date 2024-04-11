@@ -3,7 +3,8 @@ import GridWordingSelectorModal from "../widgets/GridWordingSelectorModal";
 import {createGridObject} from '../helpers/helpers';
 import {useEffect, useState } from "react";
 import GridTable from "../widgets/GridTable";
-import HandsonDataGrid from "../widgets/HandsonDataGrid";
+// import HandsonDataGrid from "../widgets/HandsonDataGrid";
+import ReactDataTableComponent from '../pages/ReactDataTableComponent';
 
 export const NodeWordingDouble = () => {
 
@@ -119,6 +120,7 @@ export const NodeWordingDouble = () => {
                                          ColumnHeaders={columnHeaders} 
                                          handleGridCollectionChange={gridWordingCollectionUpdate}
                                          handleGridCellSetActive={gridWordingCollectionUpdateActiveInput}/>
+                              {/* <ReactDataTableComponent/> */}
                          </Col>
                     </Row>
                </Col>

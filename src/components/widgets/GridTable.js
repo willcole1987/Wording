@@ -1,6 +1,5 @@
 import { Table } from 'react-bootstrap';
 import ExcelInputCell from './ExcelInputCell'
-import { useState } from 'react';
 
 const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollectionChange, handleGridCellSetActive } ) => {
   
@@ -11,23 +10,29 @@ const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollect
   const getGridValue  =  (rowHeader, columnHader) => { 
     return gridCollection.filter(i => i.row === rowHeader && i.col === columnHader)[0]["value"] 
   }
-  const mapRowCells = (rowHeader, columnHeaders, rootIndex) => (
-        <tr key={rootIndex}>
-            {
-              [rowHeader].concat(columnHeaders).map((i, index) => 
-                                          (index === 0) ? 
-                                          <td key={`${rootIndex}-${index}`}>{i}</td>
-                                          :
-                                          <ExcelInputCell key={`${rootIndex}-${index}`}
-                                                          label={rowHeader}
-                                                          name={i}
-                                                          value={getGridValue(rowHeader, i)}
-                                                          handleChange={handleGridCollectionChange}
-                                                          handleCellActivate={handleGridCellSetActive} />
-                                            )
-            }
-         </tr>
-    );
+  const getGridCellActive =  (rowHeader, columnHader) => { 
+    return gridCollection.filter(i => i.row === rowHeader && i.col === columnHader)[0]["isActive"] 
+  }
+
+  const mapRowCells = (rowHeader, columnHeaders, rootIndex) => {
+        const dictionaryRow = gridCollection.filter(x => x["row"]===rowHeader);
+        return(
+          <tr key={rootIndex}>
+            <td key={`${rootIndex}-rowHeader`}>{rowHeader}</td>
+              {
+                columnHeaders.map((i, index) => 
+                                            <ExcelInputCell key={`${rootIndex}-${index}`}
+                                                            label={rowHeader}
+                                                            name={i}
+                                                            value={dictionaryRow[index]["value"]}
+                                                            isActive={dictionaryRow[index]["isActive"]}
+                                                            handleChange={handleGridCollectionChange}
+                                                            handleCellActivate={handleGridCellSetActive} />
+                                              )
+              }
+          </tr>
+         )
+    };
 
   const getTableBodyFromRowColumnArray = (rowHeaders, columnHeaders) => (
                                               rowHeaders.map((i, rowIndex) => {
@@ -37,7 +42,7 @@ const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollect
                                               })
                                           )
   return (
-          <Table responsive striped bordered hover>
+          <Table bordered>
       <thead>
         <tr>
           {

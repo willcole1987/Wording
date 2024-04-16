@@ -17,7 +17,7 @@ export const NodeWordingDouble = () => {
      const rowHeaders = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
      const columnHeaders = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
      const [gridWordingCollection, setGridWordingCollection]  = useState(createGridObject(rowHeaders,columnHeaders));
-
+     
      const gridWordingCollectionUpdate =  (rowName, columnName, value) => {
           const newGrid  = gridWordingCollection.map(i => (i.row === rowName && i.col === columnName) ? 
                                                           {...i, 'value':value}:

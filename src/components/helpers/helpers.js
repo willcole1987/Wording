@@ -12,15 +12,41 @@ export const getWordingObjectArray = (categoryList, label) => {
         return d;
 }
 
+export const getNextGridCellEditMode = (currentCellInputMode) => (currentCellInputMode + 1) % 3; 
+export const specialGridEdit = (GridCollection, textValue, initRow, initColumn) =>
+{
+     var maxRowIndex = Math.max(...GridCollection.map( i => i.rowIndex)) - initRow;
+     var maxColIndex = Math.max(...GridCollection.map( i => i.columnIndex)) - initColumn;
+     var d = [...GridCollection]; var gridItem = {};
+     
+     const getGridItem = (rowIndex, colIndex) => GridCollection.filter(i => (i["rowIndex"] === rowIndex 
+                                                                       && i["columnIndex"] === colIndex))[0];
+     const updateGridItemValue = (collection, index, value) => collection[index]["value"] = value;
+
+     textValue.split(/\r?\n/).forEach((rowItem, rowIndex) =>
+                         (rowItem.split('\t').forEach((colItem, colIndex) => 
+                         {
+                              gridItem = getGridItem(rowIndex + initRow, colIndex + initColumn);
+                              if(rowIndex <= maxRowIndex && colIndex <= maxColIndex )  
+                                   updateGridItemValue(d, gridItem["id"], colItem);
+                         }
+                    )))
+     return d;
+}
+
 export const createGridObject = (rowHeaders, columnHeaders) =>
 {
+     const rowHeaderLength = rowHeaders.length; 
      var d = [];var x = {};
-     rowHeaders.forEach(rh => {
-               columnHeaders.forEach(ch => {  x = {};
+     rowHeaders.forEach((rh, rhIndex) => {
+               columnHeaders.forEach((ch, chIndex) => {  x = {};
+                         x["id"]=((rhIndex  * rowHeaderLength) + chIndex );
+                         x["rowIndex"]=rhIndex;
+                         x["columnIndex"]=chIndex;
                          x["row"]=rh;
                          x["col"]=ch;
                          x["value"]="";
-                         x["active"]=0;
+                         x["editMode"]=0;
                     d.push(x);
                }
           )
@@ -32,11 +58,11 @@ export const createGridObject = (rowHeaders, columnHeaders) =>
 export const  filterListByNameSearchTextAndLevel = (list, text, level, firstOnly = true) => {
      if(firstOnly === true)
      {
-          return(list.filter(i => i["Level"] === level && i["Name"].toLowerCase().includes(text)));
+          return(list.filter(i => i["Level"] === level && i["Name"].toLowerCase().includes(text.toLowerCase())));
      } 
      else
      {
-          return(list.filter(i => i["Level"] === level && i["Name"].toLowerCase().includes(text)));
+          return(list.filter(i => i["Level"] === level && i["Name"].toLowerCase().includes(text.toLowerCase())));
      }
 }
 

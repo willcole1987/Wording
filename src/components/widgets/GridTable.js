@@ -1,34 +1,24 @@
 import { Table } from 'react-bootstrap';
 import ExcelInputCell from './ExcelInputCell'
 
-const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollectionChange, handleGridCellSetActive } ) => {
-  
+const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollectionChange, handleGridPaste, handleGridChangeCellMode } ) => {
+
   const alteredColumnHeaders = ["X"].concat(ColumnHeaders);
 
   const getHeadersFromArray = (columnHeaders) => (columnHeaders.map((i,idx) => {return(<th key={idx}>{i}</th>) }));
-      
-  const getGridValue  =  (rowHeader, columnHader) => { 
-    return gridCollection.filter(i => i.row === rowHeader && i.col === columnHader)[0]["value"] 
-  }
-  const getGridCellActive =  (rowHeader, columnHader) => { 
-    return gridCollection.filter(i => i.row === rowHeader && i.col === columnHader)[0]["isActive"] 
-  }
 
   const mapRowCells = (rowHeader, columnHeaders, rootIndex) => {
         const dictionaryRow = gridCollection.filter(x => x["row"]===rowHeader);
         return(
-          <tr key={rootIndex}>
+          <tr key={rootIndex} >
             <td key={`${rootIndex}-rowHeader`}>{rowHeader}</td>
               {
                 columnHeaders.map((i, index) => 
-                                            <ExcelInputCell key={`${rootIndex}-${index}`}
-                                                            label={rowHeader}
-                                                            name={i}
-                                                            value={dictionaryRow[index]["value"]}
-                                                            isActive={dictionaryRow[index]["isActive"]}
+                                            <ExcelInputCell key={dictionaryRow[index]["id"]}
+                                                            cell={dictionaryRow[index]}
                                                             handleChange={handleGridCollectionChange}
-                                                            handleCellActivate={handleGridCellSetActive} />
-                                              )
+                                                            handleSpecialPaste={handleGridPaste}
+                                                            handleEditModeUpdate={handleGridChangeCellMode} />)
               }
           </tr>
          )
@@ -42,7 +32,7 @@ const GridTable = ({gridCollection, RowHeaders, ColumnHeaders, handleGridCollect
                                               })
                                           )
   return (
-          <Table bordered>
+      <Table bordered>
       <thead>
         <tr>
           {

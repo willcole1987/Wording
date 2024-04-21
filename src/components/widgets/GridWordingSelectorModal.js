@@ -1,3 +1,4 @@
+// import { useState, useReducer } from 'react';
 import { useState, useReducer } from 'react';
 import FilterListReducer from '../reducers/FilterListReducer';
 import {Row, Col, Button, Modal} from 'react-bootstrap';
@@ -7,13 +8,15 @@ const GridWordingSelectorModal = ({title, nodelist, handleClose }) => {
 
   const defaultNodes = [{Id: null, Level: null, Name: null},
                         {Id: null, Level: null, Name: null},
-                        {Id: null, Level: null, Name: null}]; 
+                        {Id: null, Level: null, Name: null}];
+  
   const defaultNodeTexts = ["","",""];
-  const [nodes, setNodes] = useState(defaultNodes);
   const [nodeTextArray, setNodeTextArray] = useState(defaultNodeTexts);
   const [disabledInputs, setDisabledInputs] = useState(true);
   const [activeOrder, setActiveOrder] = useState(0);
   const baseNodesList = nodelist;
+  
+  const [nodes, setNodes] = useState(defaultNodes);
   const [filterList, dispatch] =  useReducer(FilterListReducer, nodelist);
 
   const updateNodes = (index, newNode) => { const updatedNodes = nodes.map((i, idx) => (idx === index ? newNode : i ));  

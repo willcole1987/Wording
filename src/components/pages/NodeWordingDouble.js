@@ -1,41 +1,45 @@
 import {Row, Col, Container, Table,ButtonGroup, Button, Modal} from "react-bootstrap"
 import GridWordingSelectorModal from "../widgets/GridWordingSelectorModal";
-import {createGridObject} from '../helpers/helpers';
+import {createGridObject, specialGridEdit} from '../helpers/helpers';
 import {useEffect, useState } from "react";
 import GridTable from "../widgets/GridTable";
-// import HandsonDataGrid from "../widgets/HandsonDataGrid";
-import ReactDataTableComponent from '../pages/ReactDataTableComponent';
 
 export const NodeWordingDouble = () => {
 
-     const [selectedSignal, setSelectedSignal] = useState({});
+     const [selectedSignal    , setSelectedSignal] = useState({});
      const [selectedChildNode1, setSelectedChildNode1] = useState({});
      const [selectedChildNode2, setSelectedChildNode2] = useState({});
      const [isShowModal, setIsShowModal] = useState(false);
 
      // create the array of objects from lists
-     const rowHeaders = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
-     const columnHeaders = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
-     const [gridWordingCollection, setGridWordingCollection]  = useState(createGridObject(rowHeaders,columnHeaders));
-     
-     const gridWordingCollectionUpdate =  (rowName, columnName, value) => {
-          const newGrid  = gridWordingCollection.map(i => (i.row === rowName && i.col === columnName) ? 
+     const headers = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
+     const [gridWordingCollection, setGridWordingCollection]  = useState(createGridObject(headers,headers));
+
+     const gridWordingCollectionUpdate =  (cellIndex, value) => {
+          const newGrid  = gridWordingCollection.map(i => (i["id"] === cellIndex) ? 
                                                           {...i, 'value':value}:
                                                           i
                                                        );
           setGridWordingCollection(newGrid);
      }
 
-     const gridWordingCollectionUpdateActiveInput =  (rowName, columnName) => {
-           const newGrid = gridWordingCollection.map((i) => (i.row === rowName && i.col === columnName) ? 
-                                                            {...i, 'isActive':1} : 
-                                                            {...i, 'isActive':0});
+     const gridWordingPasteSpecial = (textValue, rowIndex, columnIndex) =>
+     {
+          const newGrid = specialGridEdit(gridWordingCollection, textValue, rowIndex, columnIndex);
+          setGridWordingCollection(Object.freeze(newGrid));
+     }
+
+     const gridWordingCollectionUpdateCellMode =  (cellIndex, nextEditMode) => {
+           const newGrid = gridWordingCollection.map((i) => (i["id"] === cellIndex) ? 
+                                                            {...i, "editMode":nextEditMode} : 
+                                                            {...i, "editMode":0});
           setGridWordingCollection(newGrid);
      }
 
      // Selectors
      const [nodes, setNodes] = useState([]);
-     
+     const [isNodesSelected, setIsNodesSelected] = useState(false);
+
      // modal functions
      const showModal = () => {setIsShowModal(true)}
      const updateOnModalClose = (signal, childNode1, childNode2) => 
@@ -43,7 +47,9 @@ export const NodeWordingDouble = () => {
           setSelectedSignal(signal);
           setSelectedChildNode1(childNode1);
           setSelectedChildNode2(childNode2);
+          setIsNodesSelected(true);
           setIsShowModal(false);
+
      }
 
      // TODO: set this up so that signal and subsignals are returned from the model under construction -  note dependency
@@ -72,8 +78,7 @@ export const NodeWordingDouble = () => {
                     <Row>
                          <Col>
                               <ButtonGroup>
-                                   <Button variant="dark" onClick={showModal}>Select Node Group</Button>
-                                   <Button variant="dark">Copy</Button>
+                                   <Button variant="dark" onClick={showModal}>select node group</Button>
                               </ButtonGroup>
                               <hr style={{color: "white"}}/>
                          </Col>
@@ -81,8 +86,8 @@ export const NodeWordingDouble = () => {
                     <Row>
                          <Modal show={isShowModal}>
                               <GridWordingSelectorModal title={"Grid Wording"} 
-                                                       nodelist={nodes} 
-                                                       handleClose={updateOnModalClose}  />
+                                                        nodelist={nodes} 
+                                                        handleClose={updateOnModalClose}  />
                          </Modal>
                     </Row>
                     <Row>
@@ -113,16 +118,29 @@ export const NodeWordingDouble = () => {
                          <Col>
                          </Col>
                     </Row>
-                    <Row>
-                         <Col>
-                              <GridTable gridCollection={gridWordingCollection} 
-                                         RowHeaders={rowHeaders}    
-                                         ColumnHeaders={columnHeaders} 
-                                         handleGridCollectionChange={gridWordingCollectionUpdate}
-                                         handleGridCellSetActive={gridWordingCollectionUpdateActiveInput}/>
-                              {/* <ReactDataTableComponent/> */}
-                         </Col>
-                    </Row>
+                         {isNodesSelected &&  
+                              <>
+                         <Row>
+                              <Col>
+                                   <ButtonGroup>
+                                             <Button variant="dark" onClick={showModal}>Excel copy</Button>
+                                             <Button variant="dark">export to model</Button>
+                                   </ButtonGroup>
+                                   <hr style={{color: "white"}}/>
+                              </Col>
+                         </Row>
+                         <Row>
+                              <Col>
+                                   <GridTable gridCollection={gridWordingCollection} 
+                                             RowHeaders={headers}    
+                                             ColumnHeaders={headers} 
+                                             handleGridCollectionChange={gridWordingCollectionUpdate}
+                                             handleGridPaste={gridWordingPasteSpecial}
+                                             handleGridChangeCellMode={gridWordingCollectionUpdateCellMode}/>
+                              </Col>
+                         </Row>
+                         </>
+                    }
                </Col>
      </Container>
  

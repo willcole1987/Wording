@@ -6,9 +6,9 @@ export const Login = () => {
 
      const navigate = useNavigate();
      const { login } = AuthData();
-     const [ formData, setFormData ] = useReducer((formData, newItem) => 
-                                                       { return ( {...formData, ...newItem} )}, 
-                                                       {userName: "", password: ""})
+          const [ formData, setFormData ] = useReducer((formData, newItem) => 
+                                                            { return ( {...formData, ...newItem} )}, 
+                                                            {userName: "", password: ""})
      const [ errorMessage, setErrorMessage ] = useState(null)
      
      const doLogin = async () => {
@@ -25,10 +25,14 @@ export const Login = () => {
                <h2>Login page</h2>
                <div className="inputs">
                     <div className="input">
-                         <input value={formData.userName} onChange={(e) => setFormData({userName: e.target.value}) } type="text"/>
+                         <input value={formData.userName} 
+                                onChange={(e) => setFormData({userName: e.target.value}) } 
+                                type="text"/>
                     </div>
                     <div className="input">
-                         <input value={formData.password} onChange={(e) => setFormData({password: e.target.value}) } type="password"/>
+                         <input value={formData.password} 
+                                onChange={(e) => setFormData({password: e.target.value}) } 
+                                type="password"/>
                     </div>
                     <div className="button">
                          <button onClick={doLogin}>Log in</button>

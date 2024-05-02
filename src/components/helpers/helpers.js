@@ -78,6 +78,43 @@ export const  getListWithExcludedNode = (list, node) => {
      return list.filter(i => JSON.stringify(i) !== JSON.stringify(node))
 }
 
-// copy+paste simulators 
+// copy+paste 
 export const copyObjectToClipboard = (obj) => (sessionStorage.setItem("clipboard",JSON.stringify(obj)))
 export const pasteObjectFromClipboard = () => (JSON.parse(sessionStorage.getItem("clipboard")))
+export const copyToClipboard = async (text) => {
+     try {
+         const permissions = await navigator.permissions.query({name: "clipboard-write"})
+         if (permissions.state === "granted" || permissions.state === "prompt") {
+             await navigator.clipboard.writeText(text);
+         } else {
+             throw new Error("Can't access the clipboard. Check your browser permissions.")
+         }
+     } catch (error) {
+     }
+ };
+
+export const copyForExcelGrid = (gridWordingCollection) => {
+     var ExcelGridString = "";
+     var maxIndex = Math.max(...gridWordingCollection.map( i => i.id));
+     
+     gridWordingCollection.forEach((x, index) =>
+          {
+             if(     x["rowIndex"] > 0    
+                  && x["id"] < maxIndex
+                  && x["rowIndex"] < gridWordingCollection[(index + 1)]["rowIndex"])
+               {
+                    ExcelGridString = ExcelGridString.concat(x["value"]).concat('\n');
+               }
+             else if (x["id"] < (maxIndex + 1))
+               {
+                    ExcelGridString = ExcelGridString.concat(x["value"]).concat('\t');
+               }
+          }
+     )
+     return ExcelGridString;
+}
+
+export const copyForExcel = (gridWordingCollection) => {
+     const excelGridValues = copyForExcelGrid(gridWordingCollection);
+     copyToClipboard(excelGridValues);
+}

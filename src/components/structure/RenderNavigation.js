@@ -30,9 +30,7 @@ export const RenderRoutes = () => {
         const { user, logout } = AuthData()
    
         const MenuItem = ({r}) => {
-             return (
-                  <div className="menuItem"><Link to={r.path}>{r.name}</Link></div>
-             )
+             return (<div className="menuItem"><Link to={r.path}>{r.name}</Link></div>)
         }
         // TODO - find a way to add these in as menu child components
         return (

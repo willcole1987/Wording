@@ -1,15 +1,15 @@
 import {Row, Col, Container, Table,ButtonGroup, Button, Modal} from "react-bootstrap"
 import GridWordingSelectorModal from "../widgets/GridWordingSelectorModal";
-import {createGridObject, specialGridEdit} from '../helpers/helpers';
+import {createGridObject, specialGridEdit, copyForExcel} from '../helpers/helpers';
 import {useEffect, useState } from "react";
 import GridTable from "../widgets/GridTable";
 
 export const NodeWordingDouble = () => {
 
-     const [selectedSignal    , setSelectedSignal] = useState({});
+     const [selectedSignal,     setSelectedSignal] = useState({});
      const [selectedChildNode1, setSelectedChildNode1] = useState({});
      const [selectedChildNode2, setSelectedChildNode2] = useState({});
-     const [isShowModal, setIsShowModal] = useState(false);
+     const [isShowModal,        setIsShowModal] = useState(false);
 
      // create the array of objects from lists
      const headers = ["VeryRed","Red","Gray","Green","VeryGreen","[no data]","[not applicable]"];
@@ -123,7 +123,7 @@ export const NodeWordingDouble = () => {
                          <Row>
                               <Col>
                                    <ButtonGroup>
-                                             <Button variant="dark" onClick={showModal}>Excel copy</Button>
+                                             <Button variant="dark" onClick={() => copyForExcel(gridWordingCollection)}>Excel copy</Button> 
                                              <Button variant="dark">export to model</Button>
                                    </ButtonGroup>
                                    <hr style={{color: "white"}}/>
@@ -132,11 +132,11 @@ export const NodeWordingDouble = () => {
                          <Row>
                               <Col>
                                    <GridTable gridCollection={gridWordingCollection} 
-                                             RowHeaders={headers}    
-                                             ColumnHeaders={headers} 
-                                             handleGridCollectionChange={gridWordingCollectionUpdate}
-                                             handleGridPaste={gridWordingPasteSpecial}
-                                             handleGridChangeCellMode={gridWordingCollectionUpdateCellMode}/>
+                                              RowHeaders={headers}    
+                                              ColumnHeaders={headers} 
+                                              handleGridCollectionChange={gridWordingCollectionUpdate}
+                                              handleGridPaste={gridWordingPasteSpecial}
+                                              handleGridChangeCellMode={gridWordingCollectionUpdateCellMode}/>
                               </Col>
                          </Row>
                          </>
